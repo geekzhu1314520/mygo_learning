@@ -1,0 +1,36 @@
+package no_rows_error
+
+import (
+	"database/sql"
+	"fmt"
+	"os"
+	"testing"
+
+	"github.com/pkg/errors"
+)
+
+func queryById(id int) (user, error) {
+
+	sqlStr := "select * from user where id=?"
+	var u user
+	err := db.QueryRow(sqlStr, id).Scan(&u.id, &u.name, &u.age)
+
+	// no user
+	if err == sql.ErrNoRows {
+		return u, nil
+	}
+	// find user error
+	if err != nil {
+		return u, errors.WithMessage(err, fmt.Sprintf("query.users : find id=%v user error. \n", id))
+	}
+	return u, nil
+}
+
+func TestQueryNoRows(t *testing.T) {
+	u, err := queryById(1)
+	if err != null {
+		fmt.Printf("origin error: %T %v\n", errors.Cause(err), errors.Cause(err))
+		fmt.Printf("stack trace:\n%+v\n")
+		os.Exit(1)
+	}
+}
