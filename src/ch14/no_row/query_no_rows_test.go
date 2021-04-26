@@ -9,10 +9,16 @@ import (
 	"github.com/pkg/errors"
 )
 
-func queryById(id int) (user, error) {
+type User struct {
+	id   int64
+	name string
+	age  int
+}
+
+func queryById(id int) (User, error) {
 
 	sqlStr := "select * from user where id=?"
-	var u user
+	var u User
 	err := db.QueryRow(sqlStr, id).Scan(&u.id, &u.name, &u.age)
 
 	// no user
@@ -28,7 +34,7 @@ func queryById(id int) (user, error) {
 
 func TestQueryNoRows(t *testing.T) {
 	u, err := queryById(1)
-	if err != null {
+	if err != nil {
 		fmt.Printf("origin error: %T %v\n", errors.Cause(err), errors.Cause(err))
 		fmt.Printf("stack trace:\n%+v\n")
 		os.Exit(1)
